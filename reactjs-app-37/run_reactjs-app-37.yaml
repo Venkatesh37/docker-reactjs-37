@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+#  vars:
+#    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: run react docker container
+      docker_container:
+        name: dockerreactjsappcontainer
+        image: venkatesh37/reactjs-app-37:latest
+        state: started
+        recreate: yes
+        ports:
+         - "80:80"
