@@ -1,0 +1,35 @@
+pipeline
+{
+    agent any
+    stages{
+
+     stage('SCM')
+            {
+                steps{
+                    git branch: 'master', url: 'https://github.com/xarala221/React-counter-app.git'
+                }
+              }
+
+        stage("Docker Image"){
+            steps{
+                            echo "Build Number: ${BUILD_NUMBER}"
+                sh 'docker build -t venkatesh37/reactjs-app-37:${BUILD_NUMBER} .'
+            }
+        }
+                stage("Docker Push"){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'docker-jenkins-id', passwordVariable: 'pwd37', usernameVariable: 'username37')])
+                {
+                     sh 'docker login -u ${username37} -p ${pwd37} '
+                }
+                sh 'docker push venkatesh37/reactjs-app-37:${BUILD_NUMBER}'
+            }
+                }
+                stage('StartingTHE ReactJS Container')
+                {
+                    steps{
+                        sh 'ansible-playbook /opt/reactjs-app-37/React-counter-app/run_reacrjs-container_37.yaml'
+                    }
+                }
+    }
+}
